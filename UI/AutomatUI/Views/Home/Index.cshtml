@@ -32,7 +32,9 @@
                                 <li class="list-group-item d-flex justify-content-between align-items-start" id="@i.Drinks.SlotId">
                                     <div class="ms-2 me-auto">
                                         <div class="fw-bold">Slot :@i.Drinks.SlotId</div>
-                                        Ürün Adı :@i.Drinks.Drink.Name, Fiyat :@i.Drinks.Drink.Price
+                                        Ürün Adı :@i.Drinks.Drink.Name, Fiyat :@i.Drinks.Drink.Price, 
+                                        @if(i.Drinks.Drink.isHot == true){<span style="color:red"><b>Sıcak İçecek</b></span>}
+                                        else{<span style="color:blue"><b>Soğuk İçecek</b></span>}
                                     </div>
                                     <span class="badge bg-primary rounded-pill">@i.Drinks.Drink.Count</span>
                                 </li>
