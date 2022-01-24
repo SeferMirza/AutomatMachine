@@ -1,0 +1,165 @@
+﻿@model AutomatUI.Models.ViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+<style>
+    label {
+        font-weight:bold;
+        font-size:large;
+    }
+</style>
+<div class="text-center">
+    <h1 class="display-4">Automat Machine</h1>
+    <div class="container">
+        <div class="flex-column">
+            <div class="flex-md-row row">
+                <div class="col-3">
+                    <img class="img-fluid" src="./mac.jpg" alt="">
+                </div>
+                <div class="col-4" style="height:500px;">
+                    <ol class="list-group list-group-numbered" style="overflow-y:scroll;height:500px;">
+                        @foreach (var i in Model.slots)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-start" id="@i.Foods.SlotId">
+                                <div class="ms-2 me-auto">
+                                    <div class="fw-bold">Slot :@i.Foods.SlotId</div>
+                                    Ürün Adı :@i.Foods.Food.Name, Fiyat :@i.Foods.Food.Price
+                                </div>
+                                <span class="badge bg-primary rounded-pill">@i.Foods.Food.Count</span>
+                            </li>
+                            @if (i.Drinks.SlotId != 0)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-start" id="@i.Drinks.SlotId">
+                                    <div class="ms-2 me-auto">
+                                        <div class="fw-bold">Slot :@i.Drinks.SlotId</div>
+                                        Ürün Adı :@i.Drinks.Drink.Name, Fiyat :@i.Drinks.Drink.Price
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill">@i.Drinks.Drink.Count</span>
+                                </li>
+                            }
+                        }
+                    </ol>
+                </div>
+                <div class="col-5">
+                    @using (Html.BeginForm("Index", "Home", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        <div class="row">
+                            <div class="col-xs-12 col-lg-12 m-1">
+                                <div class="m-4">
+                                    @Html.LabelFor(x => x.SlotId)
+                                    @Html.TextBoxFor(m => m.SlotId, new { @class = "form-control"})
+                                    @Html.ValidationMessageFor(m => m.SlotId, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="m-4">
+                                    @Html.LabelFor(x => x.Adet)
+                                    @Html.TextBoxFor(model => model.Adet, new { @class = "form-control"})
+                                    @Html.ValidationMessageFor(m => m.Adet, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="m-4">
+                                    @Html.LabelFor(x => x.OdemeYontemi)
+                                    @Html.DropDownListFor(model => model.OdemeYontemi,new SelectList(new List<Object>{
+                                new { value = "Card" , text = "Card"  },
+                                new { value = "Nakit" , text = "Nakit" }
+                                },"value", "text",Model.OdemeYontemi))
+                                </div>
+                                <div class="m-4" id="OdemeYontemiNumaraParent">
+                                    @Html.LabelFor(x => x.OdemeYontemiNumara)
+                                    @Html.TextBoxFor(model => model.OdemeYontemiNumara, new {@class="form-control" })
+                                    @Html.ValidationMessageFor(m => m.OdemeYontemiNumara, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="m-4">
+                                    @Html.LabelFor(x => x.Tutar)
+                                    @Html.TextBoxFor(model => model.Tutar, new {@class="form-control"})
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="SatinAlButton">Satın Al</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    
+    $(function(){
+        var urunAdi = "";
+
+        $("#Tutar").attr('readonly', 'readonly');
+
+        //İstenen ürünün adet  sayısı girildiğinde anlık tutar güncellemesi
+        $("#Adet").on('change',function(){
+
+                //Ürün listeyi alırnır
+                var users = @Html.Raw(Json.Serialize(Model.slots));
+
+                //liste döndürülür
+                $.each(users, function(index, item) {
+
+                    //İstenen ürünün slot numarı eşlenince fiyat bilgisi alınır ve tutar güncellenir
+                    if(item.drinks.slotId == $("#SlotId").val())
+                    {
+                       $("#Tutar").val(parseInt($("#Adet").val()) * item.drinks.drink.price)
+                       urunAdi = item.drinks.drink.name;
+                    }
+                    if(item.foods.slotId == $("#SlotId").val())
+                    {
+                       $("#Tutar").val(parseInt($("#Adet").val()) * item.foods.food.price)
+                       urunAdi = item.foods.food.name;
+                    }
+                 });
+        });
+        $("#OdemeYontemi").on('change', function() {
+            if(this.value == "Nakit"){
+                $("#OdemeYontemiNumara").hide();
+                $("#OdemeYontemiNumaraParent > label").hide();
+            }
+            else{
+                $("#OdemeYontemiNumara").show();
+                $("#OdemeYontemiNumaraParent > label").show();
+            }
+            });
+        $('form').validate();
+
+            //$.validator.unobtrusive.parse($('form'));
+
+
+            $("#SatinAlButton").on('click',function(){
+                                    var modelData={
+                                        UrunAdi:urunAdi,
+                                        OdemeYontemi:$("#OdemeYontemi").val(),
+                                        Tutar:$("#Tutar").val(),
+                                        SlotId:$("#SlotId").val(),
+                                        OdemeYontemiNumara:$("#OdemeYontemiNumara").val(),
+                                        Adet:$("#Adet").val()
+                                    }
+                                    if($('form').valid()){
+                                    $.ajax({
+                                            type: "POST",
+                                            url: '@Url.Action("Index", "Home")',
+                                            data: modelData,
+                                            success: function (veri) {
+
+                                                Swal.fire({
+                                                    icon: veri.icon,
+                                                    title: veri.title,
+                                                    text: veri.body,
+                                                });
+                                                if(veri.result){
+                                                    alert("Bilgi Fişi \nUrun Adı:"+veri.data.urunAdi+
+                                                    "\nAdedi:"+veri.data.miktar+
+                                                    "\nÖdeme Tütü:"+veri.data.odemeSekli+
+                                                    "\nTutar:"+veri.data.tutar+
+                                                    "\nKalan:"+veri.data.kalan)
+                                                }
+                                            }
+                                            
+                                    });
+                                    }
+            });
+ 
+    });
+</script>
