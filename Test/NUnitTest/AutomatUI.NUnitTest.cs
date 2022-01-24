@@ -41,7 +41,7 @@ namespace NUnitTest
             model.OdemeYontemi = "Nakit";
             JsonMessage result = (JsonMessage)controller.Index(model);
 
-            Assert.AreEqual("İşlem Tamam!", result.Body);
+            Assert.AreEqual(true, result.Result);
         }
     }
 }

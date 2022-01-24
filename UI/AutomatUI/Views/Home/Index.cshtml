@@ -52,6 +52,11 @@
                                     @Html.TextBoxFor(m => m.SlotId, new { @class = "form-control"})
                                     @Html.ValidationMessageFor(m => m.SlotId, "", new { @class = "text-danger" })
                                 </div>
+                                <div class="m-4" id="SekerSayisiParent">
+                                    @Html.LabelFor(x => x.SekerSayisi)
+                                    @Html.TextBoxFor(m => m.SekerSayisi, new { @class = "form-control"})
+                                    @Html.ValidationMessageFor(m => m.SekerSayisi, "", new { @class = "text-danger" })
+                                </div>
                                 <div class="m-4">
                                     @Html.LabelFor(x => x.Adet)
                                     @Html.TextBoxFor(model => model.Adet, new { @class = "form-control"})
@@ -84,17 +89,40 @@
 </div>
 
 <script type="text/javascript">
+
     
     $(function(){
         var urunAdi = "";
-
+        var users = @Html.Raw(Json.Serialize(Model.slots));
+        $("#SekerSayisi").hide();
+        $("#SekerSayisiParent > label").hide();
         $("#Tutar").attr('readonly', 'readonly');
+        $("#SlotId").on('change', function(){
+            console.log(users);
+            var value = this.value;
+            var lock = false;
+            $.each(users, function(index, item) {
 
+                    //İstenen ürünün slot numarı eşlenince fiyat bilgisi alınır ve tutar güncellenir
+                    if(!lock){
+                        if(item.drinks.slotId == value && item.drinks.drink.isHot == true)
+                        {
+                            lock=true;
+                            $("#SekerSayisi").show();
+                            $("#SekerSayisiParent > label").show();
+                        }
+                        else{
+                            $("#SekerSayisi").hide();
+                            $("#SekerSayisiParent > label").hide();
+                        }
+                    }
+                    
+                 });
+        });
         //İstenen ürünün adet  sayısı girildiğinde anlık tutar güncellemesi
         $("#Adet").on('change',function(){
 
                 //Ürün listeyi alırnır
-                var users = @Html.Raw(Json.Serialize(Model.slots));
 
                 //liste döndürülür
                 $.each(users, function(index, item) {

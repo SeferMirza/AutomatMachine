@@ -50,6 +50,7 @@ namespace AutomatUI.Controllers
                     Slot.Drinks.Drink.Id = i;
                     Slot.Drinks.Drink.Count = new Random().Next(3, 8);
                     Slot.Drinks.Drink.Price = new Random().Next(3, 15);
+                    Slot.Drinks.Drink.isHot = Convert.ToBoolean(new Random().Next(0, 2));
                 }
                 _repository.Add(Slot);
             }

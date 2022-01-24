@@ -8,5 +8,6 @@ namespace Model
 {
     public class Drink:Product
     {
+        public bool isHot { get; set; }
     }
 }

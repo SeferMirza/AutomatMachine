@@ -24,6 +24,10 @@ namespace AutomatUI.Models
         [RegularExpression(@"^[0-9]*$", ErrorMessage = "Sadece Sayı Girebilirsiniz!")]
         [Display(Name = "Kart Numarası")]
         public int OdemeYontemiNumara { get; set; }
+
+        [RegularExpression(@"^[0-9]*$", ErrorMessage = "Sadece Sayı Girebilirsiniz!")]
+        [Display(Name = "Şeker Sayısı")]
+        public int SekerSayisi { get; set; }
         public List<Slot> slots { get; set; }
     }
 }
