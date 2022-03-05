@@ -119,14 +119,14 @@ namespace AutomatUI.Controllers
                         }
                         else
                         {
-                            Plug plug = new Plug();
-                            plug.Miktar = model.Adet;
-                            plug.UrunAdi = model.UrunAdi;
-                            plug.Tutar = tutar;
-                            plug.Kalan = nakit - tutar;
-                            plug.OdemeSekli = model.OdemeYontemi;
+                            Slip slip = new Slip();
+                            slip.Miktar = model.Adet;
+                            slip.UrunAdi = model.UrunAdi;
+                            slip.Tutar = tutar;
+                            slip.Kalan = nakit - tutar;
+                            slip.OdemeSekli = model.OdemeYontemi;
 
-                            result.Data = plug;
+                            result.Data = slip;
 
                             result.Title = "Başarılı!";
                             result.Body = "İşlem Tamam!";

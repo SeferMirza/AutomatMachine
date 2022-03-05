@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Common
 {
-    public class Plug
+    public class Slip//slip
     {
+        //TODO - ing
         public string UrunAdi { get; set; }
         public int Miktar { get; set; }
         public float Tutar { get; set; }
